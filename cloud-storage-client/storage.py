@@ -1,6 +1,6 @@
-from storage import storage_adapter
-from storage import gcloud
-from storage import as3
+from cloud-storage-client import storage_adapter
+from cloud-storage-client import gcloud
+from cloud-storage-client import as3
 import time
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
