@@ -1,10 +1,12 @@
-from cloud-storage-client import storage_adapter
-from cloud-storage-client import gcloud
-from cloud-storage-client import as3
+from cloud_storage_client import storage_adapter
+from cloud_storage_client import gcloud
+from cloud_storage_client import as3
+from cloud_storage_client import azure
 import time
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
+AZURE_BLOB_STORAGE = 'ABS'
 
 class StorageClient(storage_adapter.StorageAdapter):
 
@@ -13,6 +15,8 @@ class StorageClient(storage_adapter.StorageAdapter):
             self.client = gcloud.GCloudStorageClient(bucket_name)
         elif type == AMAZON_S3:
             self.client = as3.AS3Client(bucket_name, access_key, secret_key)
+        elif type == AZURE_BLOB_STORAGE:
+            self.client = azure.AzureClient(bucket_name, access_key, secret_ke)
         else:
             raise NameError('Invalid Storage Type')
         
@@ -52,6 +56,12 @@ class StorageClient(storage_adapter.StorageAdapter):
         ts = time.time()
         self.client.upload_folder(dst_folder, src_folder, do_tar, do_compress)
         print('Upload folder elapsed time', self.elapsed_time(ts, time.time()), ' seconds')
+
+    def list_files_folder(self, folder):
+        ts = time.time()
+        files = self.client.list_files_folder(folder)
+        print('Upload folder elapsed time', self.elapsed_time(ts, time.time()), ' seconds')
+        return files
 
     def elapsed_time(self, init_time, end_time):
         return (int(end_time) - int(init_time))

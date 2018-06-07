@@ -40,14 +40,19 @@ class AS3Client():
         if do_tar:
             if do_compress:
                 ext = '.tgz'
+                verb = 'w:gz'
             else:
                 ext = '.tar'
+                verb = 'w'
+
+            folder = '/tmp/' + folder_id
+            for chunk in selected_chunks:
+                copyfile(folder_chunks + '/' + chunk, folder)
 
             folder_compress = '/tmp/' + folder_id + ext
-            with tarfile.open(folder_compress, 'a') as tar:
-                for chunk in selected_chunks:
-                    tar.add(chunk)
-                tar.close()    
+            with tarfile.open(folder_compress, verb) as tar:
+                tar.add(folder, recursive=True)
+            tar.close() 
             self.client.upload_file(folder_compress, self.bucket_name, folder_id + '/' + folder_id + ext)
         else:
             for chunk in selected_chunks:
@@ -70,7 +75,7 @@ class AS3Client():
 
             folder_compress = '/tmp/' + folder_id + ext
             with tarfile.open(folder_compress, verb) as tar:
-                tar.add(folder_results, arcname=folder_id)
+                tar.add(folder_results, arcname=folder_id, recursive=True)
             tar.close()
             self.client.upload_file(folder_compress, self.bucket_name, folder_id + '/' + folder_id + ext)
         else:
@@ -79,3 +84,12 @@ class AS3Client():
                 filePath = folder_results + '/' + file.decode('utf-8')
                 if not os.path.isdir(filePath):
                     self.client.upload_file(filePath, self.bucket_name, folder_id + '/' + file.decode('utf-8'))
+
+    def list_files_folder(self, folder):
+        bucket = self.resource.Bucket(self.bucket_name)
+        objects = bucket.objects.filter(Prefix=folder + '/')
+        file_list = [] 
+        for obj in objects:
+            file_list.append(obj.key)
+
+        return file_list

@@ -1,4 +1,5 @@
 import os, sys, tarfile
+from shutil import copyfile
 from google.cloud import storage
 
 class GCloudStorageClient():
@@ -49,16 +50,21 @@ class GCloudStorageClient():
         if do_tar:
             if do_compress:
                 ext = '.tgz'
+                verb = 'w:gz'
             else:
                 ext = '.tar'
+                verb = 'w'
+
+            folder = '/tmp/' + folder_id
+            for chunk in selected_chunks:
+                copyfile(folder_chunks + '/' + chunk, folder)
 
             folder_compress = '/tmp/' + folder_id + ext
-            with tarfile.open(folder_compress, 'a') as tar:
-                for chunk in selected_chunks:
-                    tar.add(chunk)
-                tar.close()
-                blob = bucket.blob(folder_id + '/' + folder_id + ext)
-                blob.upload_from_filename(filename=folder_compress)
+            with tarfile.open(folder_compress, verb) as tar:
+                tar.add(folder, recursive=True)
+            tar.close()
+            blob = bucket.blob(folder_id + '/' + folder_id + ext)
+            blob.upload_from_filename(filename=folder_compress)
         else:
             for chunk in selected_chunks:
                 blob = bucket.blob(folder_id + '/' + chunk)
@@ -89,7 +95,7 @@ class GCloudStorageClient():
             folder_compress = '{}/result.{}'.format(local_folder, ext)
             print('Compressing to {}'.format(folder_compress))
             with tarfile.open(folder_compress, verb) as tar:
-                tar.add(src_folder, arcname=dst_folder)
+                tar.add(src_folder, arcname=dst_folder, recursive=True)
             tar.close()
             blob = bucket.blob(dst_folder + ext)
             blob.upload_from_filename(filename=folder_compress)
@@ -100,3 +106,8 @@ class GCloudStorageClient():
                 if not os.path.isdir(filePath):
                     blob = bucket.blob(dst_folder + '/' + file.decode('utf-8'))
                     blob.upload_from_filename(filename=filePath)
+
+    def list_files_folder(self, folder):
+        bucket = self.client.get_bucket(self.bucket_name)
+        return [blob.name for blob in bucket.list_blobs() if blob.name.find(folder + '/') == 0]
+
