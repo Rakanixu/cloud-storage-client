@@ -5,6 +5,8 @@ pip3 install cloud-storage-client
 
 ````
 
+
+
 Example usage:
 
 ````
@@ -12,7 +14,7 @@ from cloud_storage_client import storage
 import os
 
 storageClient = storage.StorageClient(
-    os.environ['STORAGE_PROVIDER'],
+    os.environ['STORAGE_PROVIDER'], # GOOGLE_CLOUD_STORAGE = 'GCS', AMAZON_S3 = 'S3', AZURE_BLOB_STORAGE = 'ABS'
     os.environ['STORAGE_BUCKET_NAME'],
     os.getenv('STORAGE_ACCESS_KEY'),
     os.getenv('STORAGE_SECRET_KEY'))
