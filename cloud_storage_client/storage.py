@@ -16,7 +16,7 @@ class StorageClient(storage_adapter.StorageAdapter):
         elif type == AMAZON_S3:
             self.client = as3.AS3Client(bucket_name, access_key, secret_key)
         elif type == AZURE_BLOB_STORAGE:
-            self.client = azure.AzureClient(bucket_name, access_key, secret_ke)
+            self.client = azure.AzureClient(bucket_name, access_key, secret_key)
         else:
             raise NameError('Invalid Storage Type')
         
