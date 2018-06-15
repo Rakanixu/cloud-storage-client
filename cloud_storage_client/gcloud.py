@@ -72,7 +72,11 @@ class GCloudStorageClient():
 
     def download_file(self, folder_id, selected_chunk, output_folder):
         bucket = self.client.get_bucket(self.bucket_name)
-        blob = bucket.blob(folder_id + '/' + selected_chunk)
+        if folder_id == '':
+            file_path = selected_chunk
+        else:
+            file_path = folder_id + '/' + selected_chunk
+        blob = bucket.blob(file_path)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         splitted_name = blob.name.split('/')

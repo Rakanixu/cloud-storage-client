@@ -62,7 +62,11 @@ class AS3Client():
         bucket = self.resource.Bucket(self.bucket_name)
         if not os.path.exists(folder_output):
             os.makedirs(folder_output)
-        bucket.download_file(folder_id + '/' + selected_chunk, folder_output + '/' + selected_chunk)
+        if folder_id == '':
+            file_path = selected_chunk
+        else:
+            file_path = folder_id + '/' + selected_chunk
+        bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
     def upload_folder(self, folder_id, folder_results, do_tar=False, do_compress=False):
         if do_tar:

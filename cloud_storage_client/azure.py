@@ -58,7 +58,11 @@ class AzureClient():
     def download_file(self, folder_id, selected_chunk, output_folder):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        self.service.get_blob_to_path(self.bucket_name, folder_id + '/' + selected_chunk, output_folder + '/' + selected_chunk)
+        if folder_id == '':
+            file_path = selected_chunk
+        else:
+            file_path = folder_id + '/' + selected_chunk
+        self.service.get_blob_to_path(self.bucket_name, file_path, output_folder + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
