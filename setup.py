@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "cloud_storage_client",
-    version = "0.0.4",
+    version = "0.0.5",
     author = "Pablo Aguirre",
     author_email = "paguirrerubio@gmail.com",
     license = "MIT",
@@ -17,5 +17,6 @@ setup(
         'boto3==1.4.1',
         'google.cloud==0.32.0',
         'azure==3.0.0',
+        'pysftp==0.2.9'
     ],
 )

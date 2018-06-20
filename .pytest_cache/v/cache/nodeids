@@ -1,6 +1,13 @@
 [
-  "gcloud_test.py::TestGcloudMethods::test_upload_files_tar",
-  "gcloud_test.py::TestGcloudMethods::test_upload_files_tar_compress",
-  "gcloud_test.py::TestGcloudMethods::test_upload_folder_tar",
-  "gcloud_test.py::TestGcloudMethods::test_upload_folder_tar_compress"
+  "ftp_test.py::TestFTPMethods::test_delete_file",
+  "ftp_test.py::TestFTPMethods::test_delete_folder",
+  "ftp_test.py::TestFTPMethods::test_download_file",
+  "ftp_test.py::TestFTPMethods::test_download_folder",
+  "ftp_test.py::TestFTPMethods::test_list_files_folder",
+  "ftp_test.py::TestFTPMethods::test_upload_file",
+  "ftp_test.py::TestFTPMethods::test_upload_files",
+  "ftp_test.py::TestFTPMethods::test_upload_files_tar",
+  "ftp_test.py::TestFTPMethods::test_upload_folder",
+  "ftp_test.py::TestFTPMethods::test_upload_folder_tar",
+  "ftp_test.py::TestFTPMethods::test_upload_folder_tar_compress"
 ]

@@ -2,21 +2,29 @@ from cloud_storage_client import storage_adapter
 from cloud_storage_client import gcloud
 from cloud_storage_client import as3
 from cloud_storage_client import azure
+from cloud_storage_client import sftp
+from cloud_storage_client import ftp
 import time
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
 AZURE_BLOB_STORAGE = 'ABS'
+FTP = 'FTP'
 
 class StorageClient(storage_adapter.StorageAdapter):
 
-    def __init__(self, type, bucket_name, access_key, secret_key):
+    def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, username=None, password=None, host=None, port=None, secure=None):
         if type == GOOGLE_CLOUD_STORAGE:
             self.client = gcloud.GCloudStorageClient(bucket_name)
         elif type == AMAZON_S3:
             self.client = as3.AS3Client(bucket_name, access_key, secret_key)
         elif type == AZURE_BLOB_STORAGE:
             self.client = azure.AzureClient(bucket_name, access_key, secret_key)
+        elif type == FTP:
+            if secure:
+                self.client = sftp.SFTPClient(host, port, username, password)
+            else:
+                self.client = sftp.FTPClient(host, port, username, password)
         else:
             raise NameError('Invalid Storage Type')
         
