@@ -20,5 +20,6 @@
   "ftp_test.py::TestSFTPMethods::test_upload_folder_tar_compress": true,
   "gcloud_keys_test.py::TestBoto3Methods::test_delete_file": true,
   "sftp_test.py::TestSFTPMethods::test_download_folder": true,
-  "storage_test.py::TestSFTPMethods::test_delete_file_ftp": true
+  "storage_test.py::TestSFTPMethods::test_delete_file_ftp": true,
+  "storage_test.py::TestSFTPMethods::test_upload_file_ftp": true
 }

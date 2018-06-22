@@ -11,3 +11,4 @@ build/*
 *.pyc
 .DS_store
 .pytest_cache/*
+.pytest_cache

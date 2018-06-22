@@ -1,13 +1,5 @@
 [
-  "ftp_test.py::TestFTPMethods::test_delete_file",
-  "ftp_test.py::TestFTPMethods::test_delete_folder",
-  "ftp_test.py::TestFTPMethods::test_download_file",
-  "ftp_test.py::TestFTPMethods::test_download_folder",
-  "ftp_test.py::TestFTPMethods::test_list_files_folder",
-  "ftp_test.py::TestFTPMethods::test_upload_file",
-  "ftp_test.py::TestFTPMethods::test_upload_files",
-  "ftp_test.py::TestFTPMethods::test_upload_files_tar",
-  "ftp_test.py::TestFTPMethods::test_upload_folder",
-  "ftp_test.py::TestFTPMethods::test_upload_folder_tar",
-  "ftp_test.py::TestFTPMethods::test_upload_folder_tar_compress"
+  "storage_test.py::TestSFTPMethods::test_upload_file_abs",
+  "storage_test.py::TestSFTPMethods::test_upload_file_ftp",
+  "storage_test.py::TestSFTPMethods::test_upload_file_s3_minio"
 ]

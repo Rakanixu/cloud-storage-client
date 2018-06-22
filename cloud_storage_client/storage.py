@@ -17,11 +17,11 @@ class StorageClient(storage_adapter.StorageAdapter):
         if type == GOOGLE_CLOUD_STORAGE:
             self.client = gcloud.GCloudStorageClient(bucket_name)
         elif type == AMAZON_S3:
-            self.client = as3.AS3Client(bucket_name, access_key, secret_key)
+            self.client = as3.AS3Client(bucket_name, access_key, secret_key, host, secure)
         elif type == AZURE_BLOB_STORAGE:
             self.client = azure.AzureClient(bucket_name, access_key, secret_key)
         elif type == FTP:
-            if secure:
+            if secure or secure == 'true' or secure == 'True':
                 self.client = sftp.SFTPClient(host, port, username, password)
             else:
                 self.client = sftp.FTPClient(host, port, username, password)

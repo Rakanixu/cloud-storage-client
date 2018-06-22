@@ -7,13 +7,22 @@ class AS3Client():
     Boto3 Client to connect with Amazon S3 storage
     """
 
-    def __init__(self, bucket_name, access_key, secret_key):
+    def __init__(self, bucket_name, access_key, secret_key, endpoint, is_secure):
         session = boto3.Session(access_key, secret_key)
         self.bucket_name = bucket_name
         self.access_key = access_key
         self.secret_key = secret_key
-        self.client = session.client('s3')
-        self.resource = session.resource('s3')
+        if endpoint == None or endpoint == '':
+            self.client = session.client('s3')
+            self.resource = session.resource('s3')
+        else:
+            if is_secure == 'true' or is_secure == 'True' or is_secure:
+                secure = True
+            else:
+                secure = False
+
+            self.client = session.client('s3', endpoint_url=endpoint, use_ssl=secure)
+            self.resource = session.resource('s3', endpoint_url=endpoint, use_ssl=secure)
 
     def delete_file(self, file_path):
         bucket = self.resource.Bucket(self.bucket_name)
