@@ -77,7 +77,8 @@ class AS3Client():
             file_path = folder_id + '/' + selected_chunk
         bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
-    def upload_folder(self, folder_id, folder_results, do_tar=False, do_compress=False):
+    def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
+        print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -86,17 +87,21 @@ class AS3Client():
                 ext = '.tar'
                 verb = 'w'
 
-            folder_compress = '/tmp/' + folder_id + ext
+            local_folder = '/tmp/{}'.format(dst_folder)
+            os.makedirs(local_folder, exist_ok=True)
+
+            folder_compress = '{}/result.{}'.format(local_folder, ext)
+            print('Compressing to {}'.format(folder_compress))
             with tarfile.open(folder_compress, verb) as tar:
-                tar.add(folder_results, arcname=folder_id, recursive=True)
+                tar.add(src_folder, arcname=dst_folder, recursive=True)
             tar.close()
-            self.client.upload_file(folder_compress, self.bucket_name, folder_id + '/' + folder_id + ext)
+            self.client.upload_file(folder_compress, self.bucket_name, dst_folder + ext)
         else:
-            dir = os.fsencode(folder_results)
+            dir = os.fsencode(src_folder)
             for file in os.listdir(dir):
-                filePath = folder_results + '/' + file.decode('utf-8')
+                filePath = src_folder + '/' + file.decode('utf-8')
                 if not os.path.isdir(filePath):
-                    self.client.upload_file(filePath, self.bucket_name, folder_id + '/' + file.decode('utf-8'))
+                    self.client.upload_file(filePath, self.bucket_name, dst_folder + '/' + file.decode('utf-8'))
 
     def list_files_folder(self, folder):
         bucket = self.resource.Bucket(self.bucket_name)
