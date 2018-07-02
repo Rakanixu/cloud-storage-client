@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "cloud_storage_client",
-    version = "0.0.8",
+    version = "0.0.9",
     author = "Pablo Aguirre",
     author_email = "paguirrerubio@gmail.com",
     license = "MIT",

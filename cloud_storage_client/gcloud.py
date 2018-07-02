@@ -2,6 +2,8 @@ import os, sys, tarfile
 from shutil import copyfile
 from google.cloud import storage
 
+CHUNK_SIZE = 10485760
+
 class GCloudStorageClient():
     """
     Google Cloud Storage Client to connect with Goocle Cloud Storage
@@ -17,7 +19,7 @@ class GCloudStorageClient():
 
         for blob in blobs:
             if blob.name.find(file_path) == 0:
-                blob = bucket.blob(blob.name)
+                blob = bucket.blob(blob.name, chunk_size=CHUNK_SIZE)
                 blob.delete()
 
     def delete_folder(self, folder_id):
@@ -26,7 +28,7 @@ class GCloudStorageClient():
 
         for blob in blobs:
             if blob.name.find(folder_id + '/') == 0:
-                blob = bucket.blob(blob.name)
+                blob = bucket.blob(blob.name, chunk_size=CHUNK_SIZE)
                 blob.delete()
 
     def download_folder(self, src_folder, dst_folder):
@@ -42,7 +44,7 @@ class GCloudStorageClient():
 
     def upload_file(self, src_file, dst_file):
         bucket = self.client.get_bucket(self.bucket_name)
-        blob = bucket.blob(dst_file)
+        blob = bucket.blob(dst_file, chunk_size=CHUNK_SIZE)
         blob.upload_from_filename(filename=src_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
@@ -63,11 +65,11 @@ class GCloudStorageClient():
             with tarfile.open(folder_compress, verb) as tar:
                 tar.add(folder, recursive=True)
             tar.close()
-            blob = bucket.blob(folder_id + '/' + folder_id + ext)
+            blob = bucket.blob(folder_id + '/' + folder_id + ext, chunk_size=CHUNK_SIZE)
             blob.upload_from_filename(filename=folder_compress)
         else:
             for chunk in selected_chunks:
-                blob = bucket.blob(folder_id + '/' + chunk)
+                blob = bucket.blob(folder_id + '/' + chunk, chunk_size=CHUNK_SIZE)
                 blob.upload_from_filename(filename=folder_chunks + '/' + chunk)
 
     def download_file(self, folder_id, selected_chunk, output_folder):
@@ -76,7 +78,7 @@ class GCloudStorageClient():
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk
-        blob = bucket.blob(file_path)
+        blob = bucket.blob(file_path, chunk_size=CHUNK_SIZE)
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         splitted_name = blob.name.split('/')
@@ -101,14 +103,14 @@ class GCloudStorageClient():
             with tarfile.open(folder_compress, verb) as tar:
                 tar.add(src_folder, arcname=dst_folder, recursive=True)
             tar.close()
-            blob = bucket.blob(dst_folder + ext)
+            blob = bucket.blob(dst_folder + ext, chunk_size=CHUNK_SIZE)
             blob.upload_from_filename(filename=folder_compress)
         else:
             dir = os.fsencode(src_folder)
             for file in os.listdir(dir):
                 filePath = src_folder + '/' + file.decode('utf-8')
                 if not os.path.isdir(filePath):
-                    blob = bucket.blob(dst_folder + '/' + file.decode('utf-8'))
+                    blob = bucket.blob(dst_folder + '/' + file.decode('utf-8'), chunk_size=CHUNK_SIZE)
                     blob.upload_from_filename(filename=filePath)
 
     def list_files_folder(self, folder):
