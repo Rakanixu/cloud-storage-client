@@ -1,5 +1,0 @@
-[
-  "storage_test.py::TestSFTPMethods::test_upload_file_abs",
-  "storage_test.py::TestSFTPMethods::test_upload_file_ftp",
-  "storage_test.py::TestSFTPMethods::test_upload_file_s3_minio"
-]

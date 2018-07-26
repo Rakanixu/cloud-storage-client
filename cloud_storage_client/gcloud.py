@@ -45,6 +45,7 @@ class GCloudStorageClient():
     def upload_file(self, src_file, dst_file):
         bucket = self.client.get_bucket(self.bucket_name)
         blob = bucket.blob(dst_file, chunk_size=CHUNK_SIZE)
+        blob.cache_control = 'public, max-age=2'
         blob.upload_from_filename(filename=src_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
@@ -66,10 +67,12 @@ class GCloudStorageClient():
                 tar.add(folder, recursive=True)
             tar.close()
             blob = bucket.blob(folder_id + '/' + folder_id + ext, chunk_size=CHUNK_SIZE)
+            blob.cache_control = 'public, max-age=2'
             blob.upload_from_filename(filename=folder_compress)
         else:
             for chunk in selected_chunks:
                 blob = bucket.blob(folder_id + '/' + chunk, chunk_size=CHUNK_SIZE)
+                blob.cache_control = 'public, max-age=2'
                 blob.upload_from_filename(filename=folder_chunks + '/' + chunk)
 
     def download_file(self, folder_id, selected_chunk, output_folder):
@@ -104,6 +107,7 @@ class GCloudStorageClient():
                 tar.add(src_folder, arcname=dst_folder, recursive=True)
             tar.close()
             blob = bucket.blob(dst_folder + ext, chunk_size=CHUNK_SIZE)
+            blob.cache_control = 'public, max-age=2'
             blob.upload_from_filename(filename=folder_compress)
         else:
             dir = os.fsencode(src_folder)
@@ -111,6 +115,7 @@ class GCloudStorageClient():
                 filePath = src_folder + '/' + file.decode('utf-8')
                 if not os.path.isdir(filePath):
                     blob = bucket.blob(dst_folder + '/' + file.decode('utf-8'), chunk_size=CHUNK_SIZE)
+                    blob.cache_control = 'public, max-age=2'
                     blob.upload_from_filename(filename=filePath)
 
     def list_files_folder(self, folder):
