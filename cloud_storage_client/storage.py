@@ -4,12 +4,14 @@ from cloud_storage_client import as3
 from cloud_storage_client import azure
 from cloud_storage_client import sftp
 from cloud_storage_client import ftp
+from cloud_storage_client import file_system
 import time
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
 AZURE_BLOB_STORAGE = 'ABS'
 FTP = 'FTP'
+FILE_SYSTEM = 'FILE_SYSTEM'
 
 class StorageClient(storage_adapter.StorageAdapter):
 
@@ -25,6 +27,8 @@ class StorageClient(storage_adapter.StorageAdapter):
                 self.client = sftp.SFTPClient(host, port, username, password)
             else:
                 self.client = sftp.FTPClient(host, port, username, password)
+        elif type == FILE_SYSTEM:
+            self.client = file_system.FileSystemClient()
         else:
             raise NameError('Invalid Storage Type')
         

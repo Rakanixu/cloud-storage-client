@@ -4,6 +4,7 @@ gcloud_keys_test.py
 azure_test.py
 sftp_test.py
 ftp_test.py
+file_system_test.py
 storage_test.py
 dist/*
 build/*
