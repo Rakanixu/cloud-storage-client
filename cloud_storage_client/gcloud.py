@@ -15,7 +15,7 @@ class GCloudStorageClient():
 
     def delete_file(self, file_path):
         bucket = self.client.get_bucket(self.bucket_name)
-        blobs = bucket.list_blobs()
+        blobs = bucket.list_blobs(prefix=file_path)
 
         for blob in blobs:
             if blob.name.find(file_path) == 0:
@@ -24,7 +24,7 @@ class GCloudStorageClient():
 
     def delete_folder(self, folder_id):
         bucket = self.client.get_bucket(self.bucket_name)
-        blobs = bucket.list_blobs()
+        blobs = bucket.list_blobs(prefix=folder_id)
 
         for blob in blobs:
             if blob.name.find(folder_id + '/') == 0:
@@ -33,7 +33,7 @@ class GCloudStorageClient():
 
     def download_folder(self, src_folder, dst_folder):
         bucket = self.client.get_bucket(self.bucket_name)
-        blobs = bucket.list_blobs()
+        blobs = bucket.list_blobs(prefix=src_folder)
 
         for blob in blobs:
             if blob.name.find(src_folder + '/') == 0:
@@ -120,5 +120,5 @@ class GCloudStorageClient():
 
     def list_files_folder(self, folder):
         bucket = self.client.get_bucket(self.bucket_name)
-        return [blob.name for blob in bucket.list_blobs() if blob.name.find(folder + '/') == 0]
+        return [blob.name for blob in bucket.list_blobs(prefix=folder) if blob.name.find(folder + '/') == 0]
 
