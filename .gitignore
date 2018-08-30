@@ -6,6 +6,7 @@ sftp_test.py
 ftp_test.py
 file_system_test.py
 storage_test.py
+test_gcs_boto3.py
 dist/*
 build/*
 *.egg-info/*

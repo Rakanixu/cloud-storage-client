@@ -6,7 +6,7 @@ def read(fname):
 
 setup(
     name = "cloud_storage_client",
-    version = "0.0.12",
+    version = "0.0.13",
     author = "Pablo Aguirre",
     author_email = "paguirrerubio@gmail.com",
     license = "MIT",
@@ -14,6 +14,7 @@ setup(
     packages=['cloud_storage_client'],
     long_description=read('README.md'),
     install_requires=[
+        'botocore==1.11.4',
         'boto3==1.4.1',
         'google.cloud==0.32.0',
         'azure==3.0.0',

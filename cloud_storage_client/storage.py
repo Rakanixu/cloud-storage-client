@@ -1,5 +1,6 @@
 from cloud_storage_client import storage_adapter
 from cloud_storage_client import gcloud
+from cloud_storage_client import gcloud_access_secret
 from cloud_storage_client import as3
 from cloud_storage_client import azure
 from cloud_storage_client import sftp
@@ -15,9 +16,12 @@ FILE_SYSTEM = 'FILE_SYSTEM'
 
 class StorageClient(storage_adapter.StorageAdapter):
 
-    def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, username=None, password=None, host=None, port=None, secure=None):
+    def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, region=None, username=None, password=None, host=None, port=None, secure=None):
         if type == GOOGLE_CLOUD_STORAGE:
-            self.client = gcloud.GCloudStorageClient(bucket_name)
+            if access_key != None and secret_key != None:
+                self.client = gcloud_access_secret.GCloudStorageClientAccessKeySecretKey(bucket_name, access_key, secret_key, region=region)
+            else:
+                self.client = gcloud.GCloudStorageClient(bucket_name)
         elif type == AMAZON_S3:
             self.client = as3.AS3Client(bucket_name, access_key, secret_key, host, secure)
         elif type == AZURE_BLOB_STORAGE:
@@ -99,8 +103,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries <= self.retries:
             try:
                 self._upload_file(src_file, dst_file)
-            except:
-                print('Retriying request in', seconds_wait, ' seconds')
+            except ValueError:
+                print('Retriying request in', seconds_wait, ' seconds', ValueError)
                 time.sleep(seconds_wait)
                 retries = retries + 1
                 seconds_wait = seconds_wait * self.backoffValue
