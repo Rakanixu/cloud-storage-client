@@ -18,7 +18,7 @@ class StorageClient(storage_adapter.StorageAdapter):
 
     def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, region=None, username=None, password=None, host=None, port=None, secure=None):
         if type == GOOGLE_CLOUD_STORAGE:
-            if access_key != None and secret_key != None:
+            if access_key != None and secret_key != None and access_key != "" and access_key != "":
                 self.client = gcloud_access_secret.GCloudStorageClientAccessKeySecretKey(bucket_name, access_key, secret_key, region=region)
             else:
                 self.client = gcloud.GCloudStorageClient(bucket_name)
