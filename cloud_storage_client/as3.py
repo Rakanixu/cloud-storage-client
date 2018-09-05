@@ -47,9 +47,13 @@ class AS3Client():
             bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
     
     def upload_file(self, src_file, dst_file):
+        if dst_file[0] == '/':
+            dst_file = dst_file[1:len(dst_file)]
         self.client.upload_file(src_file, self.bucket_name, dst_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -84,6 +88,8 @@ class AS3Client():
         bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
+        if dst_folder[0] == '/':
+            dst_folder = dst_folder[1:len(dst_folder)]
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
         if do_tar:
             if do_compress:

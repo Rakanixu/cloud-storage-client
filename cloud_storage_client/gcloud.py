@@ -50,12 +50,16 @@ class GCloudStorageClient():
 
     def upload_file(self, src_file, dst_file):
         bucket = self.client.get_bucket(self.bucket_name)
+        if dst_file[0] == '/':
+            dst_file = dst_file[1:len(dst_file)]
         blob = bucket.blob(dst_file, chunk_size=CHUNK_SIZE)
         blob.cache_control = 'public, max-age=2'
         blob.upload_from_filename(filename=src_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         bucket = self.client.get_bucket(self.bucket_name)
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -97,6 +101,8 @@ class GCloudStorageClient():
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
         bucket = self.client.get_bucket(self.bucket_name)
+        if dst_folder[0] == '/':
+            dst_folder = dst_folder[1:len(dst_folder)]
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
         if do_tar:
             if do_compress:

@@ -36,10 +36,14 @@ class AzureClient():
                 self.service.get_blob_to_path(self.bucket_name, blob.name, dst_folder + '/' + splitted_name[len(splitted_name) - 1])
 
     def upload_file(self, src_file, dst_file):
+        if dst_file[0] == '/':
+            dst_file = dst_file[1:len(dst_file)]    
         self.service.create_blob_from_path(self.bucket_name, dst_file, src_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]    
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -58,7 +62,7 @@ class AzureClient():
             tar.close()
             self.service.create_blob_from_path(self.bucket_name, folder_id + '/' + folder_id + ext, folder_compress)
         else:
-            for chunk in selected_chunks:
+            for chunk in selected_chunks:            
                 self.service.create_blob_from_path(self.bucket_name, folder_id + '/' + chunk, folder_chunks + '/' + chunk)
     
     def download_file(self, folder_id, selected_chunk, output_folder):
@@ -74,6 +78,8 @@ class AzureClient():
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
+        if dst_folder[0] == '/':
+            dst_folder = dst_folder[1:len(dst_folder)]
         if do_tar:
             if do_compress:
                 ext = '.tgz'

@@ -42,10 +42,14 @@ class GCloudStorageClientAccessKeySecretKey():
             self.bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
     
     def upload_file(self, src_file, dst_file):
+        if dst_file[0] == '/':
+            dst_file = dst_file[1:len(dst_file)]
         with open(src_file, 'rb') as data:
             self.s3.Object(self.bucket_name, dst_file).put(Body=data)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -83,6 +87,8 @@ class GCloudStorageClientAccessKeySecretKey():
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
+        if dst_folder[0] == '/':
+            dst_folder = dst_folder[1:len(dst_folder)]
         if do_tar:
             if do_compress:
                 ext = '.tgz'
@@ -99,7 +105,6 @@ class GCloudStorageClientAccessKeySecretKey():
             with tarfile.open(folder_compress, verb) as tar:
                 tar.add(src_folder, arcname=dst_folder, recursive=True)
             tar.close()
-
             with open(folder_compress, 'rb') as data:
                 self.s3.Object(self.bucket_name, dst_folder + ext).put(Body=data)
         else:
