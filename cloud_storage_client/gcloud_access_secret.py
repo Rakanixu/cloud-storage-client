@@ -21,16 +21,22 @@ class GCloudStorageClientAccessKeySecretKey():
         self.bucket_name = bucket_name
 
     def delete_file(self, file_path):
+        if file_path[0] == '/':
+            file_path = file_path[1:len(file_path)]
         for obj in self.bucket.objects.filter(Prefix=file_path):
             obj.delete()
 
     def delete_folder(self, folder_id):
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         for obj in self.bucket.objects.filter(Prefix=folder_id + '/'):
             obj.delete()
             
     def download_folder(self, folder_id, folder_output):
         if not os.path.exists(folder_output):
             os.makedirs(folder_output)
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         for obj in self.bucket.objects.filter(Prefix=folder_id + '/'):
             splitted_name = obj.key.split('/')
             self.bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
@@ -71,6 +77,8 @@ class GCloudStorageClientAccessKeySecretKey():
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk
+        if file_path[0] == '/':
+            file_path = file_path[1:len(file_path)]    
         self.bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
@@ -103,6 +111,8 @@ class GCloudStorageClientAccessKeySecretKey():
                         self.s3.Object(self.bucket_name, dst_folder + '/' + file.decode('utf-8')).put(Body=data)
 
     def list_files_folder(self, folder):
+        if folder[0] == '/':
+            folder = folder[1:len(folder)]    
         objects = self.bucket.objects.filter(Prefix=folder + '/')
         file_list = [] 
         for obj in objects:

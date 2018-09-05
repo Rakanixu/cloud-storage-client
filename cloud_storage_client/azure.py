@@ -12,16 +12,22 @@ class AzureClient():
         self.bucket_name = bucket_name
 
     def delete_file(self, file_path):
+        if file_path[0] == '/':
+            file_path = file_path[1:len(file_path)]
         self.service.delete_blob(self.bucket_name, file_path)
         
     def delete_folder(self, folder_id):
         blobs = self.service.list_blobs(self.bucket_name)
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         for blob in blobs:
             if blob.name.find(folder_id + '/') == 0:
                 self.service.delete_blob(self.bucket_name, blob.name)
                 
     def download_folder(self, src_folder, dst_folder):
         blobs = self.service.list_blobs(self.bucket_name)
+        if src_folder[0] == '/':
+            src_folder = src_folder[1:len(src_folder)]
         for blob in blobs:
             if blob.name.find(src_folder + '/') == 0:
                 if not os.path.exists(dst_folder):
@@ -62,6 +68,8 @@ class AzureClient():
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk
+        if file_path[0] == '/':
+            file_path = file_path[1:len(file_path)]
         self.service.get_blob_to_path(self.bucket_name, file_path, output_folder + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
@@ -92,5 +100,7 @@ class AzureClient():
 
     def list_files_folder(self, folder):
         blobs = self.service.list_blobs(self.bucket_name)
+        if folder[0] == '/':
+            folder = folder[1:len(folder)]
         return [blob.name for blob in blobs if blob.name.find(folder + '/') == 0]
 

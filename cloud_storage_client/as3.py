@@ -31,6 +31,8 @@ class AS3Client():
 
     def delete_folder(self, folder_id):
         bucket = self.resource.Bucket(self.bucket_name)
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         for obj in bucket.objects.filter(Prefix=folder_id + '/'):
             obj.delete()
             
@@ -38,6 +40,8 @@ class AS3Client():
         bucket = self.resource.Bucket(self.bucket_name)
         if not os.path.exists(folder_output):
             os.makedirs(folder_output)
+        if folder_id[0] == '/':
+            folder_id = folder_id[1:len(folder_id)]
         for obj in bucket.objects.filter(Prefix=folder_id + '/'):
             splitted_name = obj.key.split('/')
             bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
@@ -75,6 +79,8 @@ class AS3Client():
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk
+        if file_path[0] == '/':
+            file_path = file_path[1:len(file_path)]
         bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
@@ -105,6 +111,8 @@ class AS3Client():
 
     def list_files_folder(self, folder):
         bucket = self.resource.Bucket(self.bucket_name)
+        if folder[0] == '/':
+            folder = folder[1:len(folder)]
         objects = bucket.objects.filter(Prefix=folder + '/')
         file_list = [] 
         for obj in objects:
