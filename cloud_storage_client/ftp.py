@@ -47,9 +47,25 @@ class FTPClient():
         print(src_folder + '/' + file_name + " not a file.")
 
   def upload_file(self, src_file, dst_file):
+    split_dst_file = dst_file.split('/')
+    remote_path = ""
+    for i in range(len(split_dst_file) - 1):
+      remote_path += "/" + split_dst_file[i]
+       
+    try:
+      self.client.cwd(remote_path)
+    except:
+      for i in range(len(split_dst_file) - 1):
+        try:
+          self.client.cwd(split_dst_file[i])
+        except:
+          self.client.mkd(split_dst_file[i])
+          self.client.cwd(split_dst_file[i])
+
     file = open(src_file, 'rb')
-    self.client.storbinary('STOR ' + dst_file, file)
+    self.client.storbinary('STOR ' + split_dst_file[len(split_dst_file) - 1], file)
     file.close()
+    self.client.cwd("/")
 
   def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
     if folder_id[0] != '/':
@@ -57,10 +73,20 @@ class FTPClient():
     else:
       remote_folder = folder_id
   
+    split_dst_file = remote_folder.split('/')
+    remote_path = ""
+    for i in range(len(split_dst_file) - 1):
+      remote_path += "/" + split_dst_file[i]
+       
     try:
-      self.client.mkd(remote_folder)
+      self.client.cwd(remote_path)
     except:
-      print()
+      for i in range(len(split_dst_file) - 1):
+        try:
+          self.client.cwd(split_dst_file[i])
+        except:
+          self.client.mkd(split_dst_file[i])
+          self.client.cwd(split_dst_file[i])
 
     if do_tar:
       if do_compress:
@@ -84,13 +110,15 @@ class FTPClient():
       print(folder_compress, '/' + folder_id + '/' + folder_id_short + ext)
 
       file = open(folder_compress, 'rb')
-      self.client.storbinary('STOR ' + remote_folder + '/' + folder_id_short + ext, file)
+      self.client.storbinary('STOR ' + folder_id_short + ext, file)
       file.close()
     else:
       for chunk in selected_chunks:
         file = open(folder_chunks + '/' + chunk, 'rb')
-        self.client.storbinary('STOR ' + remote_folder + '/' + chunk, file)
+        self.client.storbinary('STOR ' + chunk, file)
         file.close()
+    
+    self.client.cwd("/")
 
   def download_file(self, folder_id, selected_chunk, output_folder):
     if folder_id == '':
@@ -108,10 +136,20 @@ class FTPClient():
     else:
       remote_folder = dst_folder
   
+    split_dst_file = remote_folder.split('/')
+    remote_path = ""
+    for i in range(len(split_dst_file) - 1):
+      remote_path += "/" + split_dst_file[i]
+       
     try:
-      self.client.mkd(remote_folder)
+      self.client.cwd(remote_path)
     except:
-      print()
+      for i in range(len(split_dst_file) - 1):
+        try:
+          self.client.cwd(split_dst_file[i])
+        except:
+          self.client.mkd(split_dst_file[i])
+          self.client.cwd(split_dst_file[i])
 
     print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
     if do_tar:
@@ -128,7 +166,7 @@ class FTPClient():
         tar.add(src_folder, arcname=dst_folder, recursive=True)
       tar.close()
       file = open(folder_compress, 'rb')
-      self.client.storbinary('STOR ' + dst_folder + '/result' + ext, file)
+      self.client.storbinary('STOR ' + 'result' + ext, file)
       file.close()
     else:
       dir = os.fsencode(src_folder)
@@ -136,8 +174,10 @@ class FTPClient():
         filePath = src_folder + '/' + f.decode('utf-8')
         if not os.path.isdir(filePath):
           file = open(filePath, 'rb')
-          self.client.storbinary('STOR ' + dst_folder + '/' + f.decode('utf-8'), file)
+          self.client.storbinary('STOR ' + f.decode('utf-8'), file)
           file.close()
+    
+    self.client.cwd("/")
 
   def list_files_folder(self, folder):
     if folder[0] != '/':

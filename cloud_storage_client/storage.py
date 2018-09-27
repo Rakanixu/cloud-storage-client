@@ -30,7 +30,7 @@ class StorageClient(storage_adapter.StorageAdapter):
             if secure or secure == 'true' or secure == 'True':
                 self.client = sftp.SFTPClient(host, port, username, password)
             else:
-                self.client = sftp.FTPClient(host, port, username, password)
+                self.client = ftp.FTPClient(host, port, username, password)
         elif type == FILE_SYSTEM:
             self.client = file_system.FileSystemClient()
         else:

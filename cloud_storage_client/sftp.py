@@ -37,6 +37,14 @@ class SFTPClient():
     copy_tree(dst_folder + '/' + src_path, dst_folder + '/' + split_src_path[len(split_src_path) - 1])
 
   def upload_file(self, src_file, dst_file):
+    split_dst_file = dst_file.split('/')
+    remote_path = ""
+    for i in range(len(split_dst_file) - 1):
+      remote_path += "/" + split_dst_file[i]
+       
+    if not self.client.isdir(remote_path):
+      self.client.makedirs(remote_path)
+
     self.client.put(src_file, dst_file)
 
   def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
@@ -46,7 +54,7 @@ class SFTPClient():
       remote_folder = folder_id
   
     if not self.client.isdir(remote_folder):
-      self.client.mkdir(remote_folder)
+      self.client.makedirs(remote_folder)
 
     if do_tar:
       if do_compress:
