@@ -49,11 +49,19 @@ class AS3Client():
     def upload_file(self, src_file, dst_file):
         if dst_file[0] == '/':
             dst_file = dst_file[1:len(dst_file)]
+        if dst_file[-1] == '/':
+            dst_file = dst_file[0:len(dst_file) - 1]
+        dst_file = dst_file.replace('//', '/')
+
         self.client.upload_file(src_file, self.bucket_name, dst_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         if folder_id[0] == '/':
             folder_id = folder_id[1:len(folder_id)]
+        if folder_id[-1] == '/':
+            folder_id = folder_id[0:len(folder_id) - 1]
+        folder_id = folder_id.replace('//', '/')
+
         if do_tar:
             if do_compress:
                 ext = '.tgz'
