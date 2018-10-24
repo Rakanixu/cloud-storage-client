@@ -9,6 +9,8 @@ class FTPClient():
   """
 
   def __init__(self, host, port, username, password):
+    if port == None:
+      port = 21
     self.client = FTP()
     self.client.connect(host, port)
     self.client.login(username, password)

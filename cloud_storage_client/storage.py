@@ -13,6 +13,7 @@ AMAZON_S3 = 'S3'
 AZURE_BLOB_STORAGE = 'ABS'
 FTP = 'FTP'
 FILE_SYSTEM = 'FILE_SYSTEM'
+NETSTORAGE = 'NETSTORAGE'
 
 class StorageClient(storage_adapter.StorageAdapter):
 
@@ -26,7 +27,7 @@ class StorageClient(storage_adapter.StorageAdapter):
             self.client = as3.AS3Client(bucket_name, access_key, secret_key, host, secure)
         elif type == AZURE_BLOB_STORAGE:
             self.client = azure.AzureClient(bucket_name, access_key, secret_key)
-        elif type == FTP:
+        elif type == FTP or type == NETSTORAGE:
             if secure or secure == 'true' or secure == 'True':
                 self.client = sftp.SFTPClient(host, port, username, password)
             else:
