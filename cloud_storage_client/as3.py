@@ -44,6 +44,7 @@ class AS3Client():
             folder_id = folder_id[1:len(folder_id)]
         for obj in bucket.objects.filter(Prefix=folder_id + '/'):
             splitted_name = obj.key.split('/')
+            splitted_name = list(filter(None, splitted_name))
             bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
     
     def upload_file(self, src_file, dst_file):
@@ -87,7 +88,7 @@ class AS3Client():
         bucket = self.resource.Bucket(self.bucket_name)
         if not os.path.exists(folder_output):
             os.makedirs(folder_output)
-        if folder_id == '':
+        if folder_id == '' or folder_id == '/':
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk

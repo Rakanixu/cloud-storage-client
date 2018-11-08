@@ -33,6 +33,7 @@ class AzureClient():
                 if not os.path.exists(dst_folder):
                     os.makedirs(dst_folder)
                 splitted_name = blob.name.split('/')
+                splitted_name = list(filter(None, splitted_name))
                 self.service.get_blob_to_path(self.bucket_name, blob.name, dst_folder + '/' + splitted_name[len(splitted_name) - 1])
 
     def upload_file(self, src_file, dst_file):
@@ -76,7 +77,7 @@ class AzureClient():
     def download_file(self, folder_id, selected_chunk, output_folder):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
-        if folder_id == '':
+        if folder_id == '' or folder_id == '/':
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk

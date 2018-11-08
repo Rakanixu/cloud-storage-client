@@ -38,7 +38,7 @@ class GCloudStorageClient():
     def download_folder(self, src_folder, dst_folder):
         bucket = self.client.get_bucket(self.bucket_name)
         if src_folder[0] == '/':
-            foldersrc_folder_id = src_folder[1:len(src_folder)]
+            src_folder = src_folder[1:len(src_folder)]
         blobs = bucket.list_blobs(prefix=src_folder)
 
         for blob in blobs:
@@ -46,6 +46,7 @@ class GCloudStorageClient():
                 if not os.path.exists(dst_folder):
                     os.makedirs(dst_folder)
                 splitted_name = blob.name.split('/')
+                splitted_name = list(filter(None, splitted_name))
                 blob.download_to_filename(dst_folder + '/' + splitted_name[len(splitted_name) - 1])
 
     def upload_file(self, src_file, dst_file):
@@ -95,7 +96,7 @@ class GCloudStorageClient():
 
     def download_file(self, folder_id, selected_chunk, output_folder):
         bucket = self.client.get_bucket(self.bucket_name)
-        if folder_id == '':
+        if folder_id == '' or folder_id == '/':
             file_path = selected_chunk
         else:
             file_path = folder_id + '/' + selected_chunk
@@ -105,6 +106,7 @@ class GCloudStorageClient():
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
         splitted_name = blob.name.split('/')
+        splitted_name = list(filter(None, splitted_name))
         blob.download_to_filename(output_folder + '/' + splitted_name[len(splitted_name) - 1])
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
