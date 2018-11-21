@@ -186,4 +186,17 @@ class FTPClient():
       remote_folder = '/' + folder
     else:
       remote_folder = folder
-    return self.client.nlst(remote_folder)
+
+    self.client.cwd(remote_folder) 
+    return self.list_files()
+
+  def list_files(self):
+    files = []
+
+    def dir_callback(line):
+      bits = line.split()
+      if ('d' not in bits[0]):
+        files.append(bits[-1])
+
+    self.client.dir(dir_callback)
+    return files 
