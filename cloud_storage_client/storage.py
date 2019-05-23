@@ -36,7 +36,7 @@ class StorageClient(storage_adapter.StorageAdapter):
             self.client = file_system.FileSystemClient()
         else:
             raise NameError('Invalid Storage Type')
-        
+
         self.bucket_name = bucket_name
         self.backoffValue = 2
         total_retries = 4
@@ -56,7 +56,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.delete_file(file_path, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not delete_file', file_path)
 
     def _delete_folder(self, folder_id):
@@ -74,7 +74,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.delete_folder(folder_id, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not delete_folder', folder_id)
 
     def _download_folder(self, src_folder, dst_folder):
@@ -92,8 +92,8 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.download_folder(src_folder, dst_folder, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
-            raise Exception('Could not download_folder', src_folder, dst_folder) 
+        else:
+            raise Exception('Could not download_folder', src_folder, dst_folder)
 
     def _upload_file(self, src_file, dst_file):
         ts = time.time()
@@ -104,13 +104,13 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._upload_file(src_file, dst_file)
-            except ValueError:
+            except:
                 print('Retriying request in', seconds_wait, ' seconds', ValueError)
                 time.sleep(seconds_wait)
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.upload_file(src_file, dst_file, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not upload_file', src_file, dst_file)
 
     def _upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
@@ -128,7 +128,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.upload_files(folder_id, selected_chunks, folder_chunks, do_tar=do_tar, do_compress=do_compress, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not upload_files', folder_id, selected_chunks, folder_chunks, do_tar, do_compress)
 
     def _download_file(self, folder_id, selected_chunk, output_folder):
@@ -146,7 +146,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.download_file(folder_id, selected_chunk, output_folder, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not download_file', folder_id, selected_chunk, output_folder)
 
     def _upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
@@ -164,8 +164,8 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.upload_folder(dst_folder, src_folder, do_tar=do_tar, do_compress=do_compress, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
-            raise Exception('Could not upload_folder', dst_folder, src_folder, do_tar, do_compress)    
+        else:
+            raise Exception('Could not upload_folder', dst_folder, src_folder, do_tar, do_compress)
 
     def _list_files_folder(self, folder):
         ts = time.time()
@@ -183,7 +183,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
                 self.list_files_folder(folder, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
-        else: 
+        else:
             raise Exception('Could not list_files_folder', folder)
 
     def elapsed_time(self, init_time, end_time):
