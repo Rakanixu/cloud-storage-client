@@ -13,6 +13,7 @@ setup(
     url = "http://packages.python.org/cloud_storage_client",
     packages=['cloud_storage_client'],
     long_description=read('README.md'),
+    long_description_content_type="text/markdown",
     install_requires=[
         'botocore==1.11.4',
         'boto3==1.8.4',
