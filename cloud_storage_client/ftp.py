@@ -192,11 +192,8 @@ class FTPClient():
 
   def list_files(self):
     files = []
+    for file_info in self.client.mlsd():
+      if file_info[1]['type'] == 'file':
+        files.append(file_info[0])
 
-    def dir_callback(line):
-      bits = line.split()
-      if ('d' not in bits[0]):
-        files.append(bits[-1])
-
-    self.client.dir(dir_callback)
     return files 
