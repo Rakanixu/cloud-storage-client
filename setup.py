@@ -10,7 +10,7 @@ setup(
     author = "Pablo Aguirre",
     author_email = "paguirrerubio@gmail.com",
     license = "MIT",
-    url = "http://packages.python.org/cloud_storage_client",
+    url = "http://pypi.org/project/google-cloud-storage/",
     packages=['cloud_storage_client'],
     long_description=read('README.md'),
     long_description_content_type="text/markdown",
