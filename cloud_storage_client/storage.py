@@ -8,6 +8,8 @@ from cloud_storage_client import ftp
 from cloud_storage_client import file_system
 import time
 
+from cloud_storage_client.exceptions import IncorrectCredentialsException
+
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
 AZURE_BLOB_STORAGE = 'ABS'
@@ -15,14 +17,17 @@ FTP = 'FTP'
 FILE_SYSTEM = 'FILE_SYSTEM'
 NETSTORAGE = 'NETSTORAGE'
 
+
 class StorageClient(storage_adapter.StorageAdapter):
 
-    def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, region=None, username=None, password=None, host=None, port=None, secure=None):
+    def __init__(self, type=None, bucket_name=None, access_key=None, secret_key=None, region=None, username=None,
+                 password=None, host=None, port=None, secure=None):
         if type == GOOGLE_CLOUD_STORAGE:
             if (access_key == None and secret_key == None) or (access_key == "" and secret_key == ""):
                 self.client = gcloud.GCloudStorageClient(bucket_name)
             else:
-                self.client = gcloud_access_secret.GCloudStorageClientAccessKeySecretKey(bucket_name, access_key, secret_key, region=region)
+                self.client = gcloud_access_secret.GCloudStorageClientAccessKeySecretKey(bucket_name, access_key,
+                                                                                         secret_key, region=region)
         elif type == AMAZON_S3:
             self.client = as3.AS3Client(bucket_name, access_key, secret_key, host, secure)
         elif type == AZURE_BLOB_STORAGE:
@@ -50,6 +55,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._delete_file(file_path)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -68,6 +75,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._delete_folder(folder_id)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -86,6 +95,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._download_folder(src_folder, dst_folder)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -104,6 +115,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._upload_file(src_file, dst_file)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds', ValueError)
                 time.sleep(seconds_wait)
@@ -122,6 +135,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._upload_files(folder_id, selected_chunks, folder_chunks, do_tar=do_tar, do_compress=do_compress)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -140,6 +155,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._download_file(folder_id, selected_chunk, output_folder)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -158,6 +175,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 self._upload_folder(dst_folder, src_folder, do_tar=do_tar, do_compress=do_compress)
+            except IncorrectCredentialsException as e:
+                raise IncorrectCredentialsException
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -177,6 +196,8 @@ class StorageClient(storage_adapter.StorageAdapter):
         if retries_count < total_retries:
             try:
                 return self._list_files_folder(folder)
+            except IncorrectCredentialsException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
