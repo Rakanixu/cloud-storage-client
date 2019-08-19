@@ -8,7 +8,7 @@ from cloud_storage_client import ftp
 from cloud_storage_client import file_system
 import time
 
-from cloud_storage_client.exceptions import IncorrectCredentialsException
+from cloud_storage_client.exceptions import IncorrectCredentialsException, NotFoundException
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
@@ -117,8 +117,10 @@ class StorageClient(storage_adapter.StorageAdapter):
                 self._upload_file(src_file, dst_file)
             except IncorrectCredentialsException as e:
                 raise e
+            except NotFoundException as e:
+                raise e
             except:
-                print('Retriying request in', seconds_wait, ' seconds', ValueError)
+                print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue

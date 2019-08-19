@@ -1,8 +1,11 @@
 import os, sys, tarfile
 from shutil import copyfile
 from google.cloud import storage
+from google.cloud.exceptions import NotFound
+from cloud_storage_client.exceptions import NotFoundException
 
 CHUNK_SIZE = 10485760
+
 
 class GCloudStorageClient():
     """
@@ -50,16 +53,19 @@ class GCloudStorageClient():
                 blob.download_to_filename(dst_folder + '/' + splitted_name[len(splitted_name) - 1])
 
     def upload_file(self, src_file, dst_file):
-        bucket = self.client.get_bucket(self.bucket_name)
-        if dst_file[0] == '/':
-            dst_file = dst_file[1:len(dst_file)]
-        if dst_file[-1] == '/':
-            dst_file = dst_file[0:len(dst_file) - 1]
-        dst_file = dst_file.replace('//', '/')            
+        try:
+            bucket = self.client.get_bucket(self.bucket_name)
+            if dst_file[0] == '/':
+                dst_file = dst_file[1:len(dst_file)]
+            if dst_file[-1] == '/':
+                dst_file = dst_file[0:len(dst_file) - 1]
+            dst_file = dst_file.replace('//', '/')
 
-        blob = bucket.blob(dst_file, chunk_size=CHUNK_SIZE)
-        blob.cache_control = 'public, max-age=2'
-        blob.upload_from_filename(filename=src_file)
+            blob = bucket.blob(dst_file, chunk_size=CHUNK_SIZE)
+            blob.cache_control = 'public, max-age=2'
+            blob.upload_from_filename(filename=src_file)
+        except NotFound as notFoundError:
+            raise NotFoundException(notFoundError)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         bucket = self.client.get_bucket(self.bucket_name)
