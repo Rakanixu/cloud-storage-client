@@ -209,5 +209,24 @@ class StorageClient(storage_adapter.StorageAdapter):
         else:
             raise Exception('Could not list_files_folder', folder)
 
+    def _get_file_size(self, filename):
+        ts = time.time()
+        s = self.client.get_file_size(filename)
+        print('get_file_size elapsed time', self.elapsed_time(ts, time.time()), ' seconds')
+        return s
+
+    def get_file_size(self, filename, total_retries=4, retries_count=0, seconds_wait=0.5):
+        if retries_count < total_retries:
+            try:
+                return self._get_file_size(filename)
+            except:
+                print('Retriying request in', seconds_wait, ' seconds')
+                time.sleep(seconds_wait)
+                retries_count = retries_count + 1
+                seconds_wait = seconds_wait * self.backoffValue
+                self.get_file_size(filename, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
+        else:
+            return -1
+
     def elapsed_time(self, init_time, end_time):
         return (int(end_time) - int(init_time))

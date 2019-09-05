@@ -6,7 +6,7 @@ import os
 import shutil
 
 class GCloudStorageClientAccessKeySecretKey():
-    """ 
+    """
     Boto3 Client to connect with Google cloud storage
     """
 
@@ -31,7 +31,7 @@ class GCloudStorageClientAccessKeySecretKey():
             folder_id = folder_id[1:len(folder_id)]
         for obj in self.bucket.objects.filter(Prefix=folder_id + '/'):
             obj.delete()
-            
+
     def download_folder(self, folder_id, folder_output):
         if not os.path.exists(folder_output):
             os.makedirs(folder_output)
@@ -41,7 +41,7 @@ class GCloudStorageClientAccessKeySecretKey():
             splitted_name = obj.key.split('/')
             splitted_name = list(filter(None, splitted_name))
             self.bucket.download_file(obj.key, folder_output + '/' + splitted_name[len(splitted_name) - 1])
-    
+
     def upload_file(self, src_file, dst_file):
         if dst_file[0] == '/':
             dst_file = dst_file[1:len(dst_file)]
@@ -91,7 +91,7 @@ class GCloudStorageClientAccessKeySecretKey():
         else:
             file_path = folder_id + '/' + selected_chunk
         if file_path[0] == '/':
-            file_path = file_path[1:len(file_path)]    
+            file_path = file_path[1:len(file_path)]
         self.bucket.download_file(file_path, folder_output + '/' + selected_chunk)
 
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
@@ -126,10 +126,16 @@ class GCloudStorageClientAccessKeySecretKey():
 
     def list_files_folder(self, folder):
         if folder[0] == '/':
-            folder = folder[1:len(folder)]    
+            folder = folder[1:len(folder)]
         objects = self.bucket.objects.filter(Prefix=folder + '/')
-        file_list = [] 
+        file_list = []
         for obj in objects:
             file_list.append(obj.key)
 
         return file_list
+
+    def get_file_size(self, filename):
+        try:
+            return self.bucket.Object(filename.lstrip('/')).content_length
+        except:
+            return -1

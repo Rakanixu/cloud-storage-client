@@ -154,3 +154,8 @@ class GCloudStorageClient():
             folder = folder[1:len(folder)]
         return [blob.name for blob in bucket.list_blobs(prefix=folder) if blob.name.find(folder + '/') == 0]
 
+    def get_file_size(self, filename):
+        try:
+            return self.client.get_bucket(self.bucket_name).get_blob(filename.ltrim('/')).size
+        except:
+            return -1

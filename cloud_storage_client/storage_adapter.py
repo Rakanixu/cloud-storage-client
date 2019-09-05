@@ -7,3 +7,4 @@ class StorageAdapter:
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False): pass
     def download_file(self, folder_id, selected_chunk, output_folder): pass
     def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False): pass
+    def get_file_size(self, filename): pass

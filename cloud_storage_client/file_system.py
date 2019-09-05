@@ -4,19 +4,19 @@ import os, sys, tarfile, shutil
 
 class FileSystemClient():
     """
-    File System Client 
+    File System Client
     """
     def delete_file(self, file_path):
         os.remove(file_path)
-        
+
     def delete_folder(self, folder_id):
         shutil.rmtree(folder_id, True)
-                
+
     def download_folder(self, src_folder, dst_folder):
         if not os.path.exists(dst_folder):
             os.makedirs(dst_folder)
         copy_tree(src_folder, dst_folder)
-    
+
     def upload_file(self, src_file, dst_file):
         shutil.copyfile(src_file, dst_file)
 
@@ -44,7 +44,7 @@ class FileSystemClient():
             print(folder_compress)
             with tarfile.open(folder_compress, verb) as tar:
                 tar.add(folder_tmp, recursive=True)
-            tar.close() 
+            tar.close()
             shutil.copyfile(folder_compress, folder_id + ext)
         else:
             for chunk in selected_chunks:
@@ -86,4 +86,16 @@ class FileSystemClient():
 
     def list_files_folder(self, folder):
         return os.listdir(folder)
+
+    def get_file_size(self, filename):
+        try:
+            if not os.path.exists(filename):
+                return -1
+
+            return os.path.getsize(filename)
+        except:
+            return -1
+
+
+
 

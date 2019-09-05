@@ -10,7 +10,7 @@ class SFTPClient():
 
   def __init__(self, host, port, username, password):
     cnopts = pysftp.CnOpts()
-    cnopts.hostkeys = None 
+    cnopts.hostkeys = None
     self.client = pysftp.Connection(host=host, port=port, username=username, password=password, cnopts=cnopts)
 
   def delete_file(self, file_path):
@@ -19,7 +19,7 @@ class SFTPClient():
     else:
       remote_path = file_path
     self.client.remove(remote_path)
-        
+
   def delete_folder(self, folder_id):
     if folder_id[0] != '/':
       path = '/' + folder_id
@@ -41,7 +41,7 @@ class SFTPClient():
     remote_path = ""
     for i in range(len(split_dst_file) - 1):
       remote_path += "/" + split_dst_file[i]
-       
+
     if not self.client.isdir(remote_path):
       self.client.makedirs(remote_path)
 
@@ -52,7 +52,7 @@ class SFTPClient():
       remote_folder = '/' + folder_id
     else:
       remote_folder = folder_id
-  
+
     if not self.client.isdir(remote_folder):
       self.client.makedirs(remote_folder)
 
@@ -90,7 +90,7 @@ class SFTPClient():
       remote_folder = '/' + dst_folder
     else:
       remote_folder = dst_folder
-  
+
     if not self.client.isdir(remote_folder):
       self.client.mkdir(remote_folder)
 
@@ -122,3 +122,12 @@ class SFTPClient():
     else:
       remote_folder = folder
     return self.client.listdir(remote_folder)
+
+  def get_file_size(self, filename):
+    try:
+      if filename[0] != '/':
+        filename = '/' + filename
+
+      return self.client.stat(filename).st_size
+    except:
+        return -1

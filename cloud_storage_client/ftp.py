@@ -53,7 +53,7 @@ class FTPClient():
     remote_path = ""
     for i in range(len(split_dst_file) - 1):
       remote_path += "/" + split_dst_file[i]
-       
+
     try:
       self.client.cwd(remote_path)
     except:
@@ -74,12 +74,12 @@ class FTPClient():
       remote_folder = '/' + folder_id
     else:
       remote_folder = folder_id
-  
+
     split_dst_file = remote_folder.split('/')
     remote_path = ""
     for i in range(len(split_dst_file) - 1):
       remote_path += "/" + split_dst_file[i]
-       
+
     try:
       self.client.cwd(remote_path)
     except:
@@ -103,7 +103,7 @@ class FTPClient():
       folder = '/tmp/' + folder_id_short
 
       for chunk in selected_chunks:
-        copyfile(folder_chunks + '/' + chunk, folder)        
+        copyfile(folder_chunks + '/' + chunk, folder)
 
       folder_compress = '/tmp/' + folder_id_short + ext
       with tarfile.open(folder_compress, verb) as tar:
@@ -119,7 +119,7 @@ class FTPClient():
         file = open(folder_chunks + '/' + chunk, 'rb')
         self.client.storbinary('STOR ' + chunk, file)
         file.close()
-    
+
     self.client.cwd("/")
 
   def download_file(self, folder_id, selected_chunk, output_folder):
@@ -137,12 +137,12 @@ class FTPClient():
       remote_folder = '/' + dst_folder
     else:
       remote_folder = dst_folder
-  
+
     split_dst_file = remote_folder.split('/')
     remote_path = ""
     for i in range(len(split_dst_file) - 1):
       remote_path += "/" + split_dst_file[i]
-       
+
     try:
       self.client.cwd(remote_path)
     except:
@@ -178,7 +178,7 @@ class FTPClient():
           file = open(filePath, 'rb')
           self.client.storbinary('STOR ' + f.decode('utf-8'), file)
           file.close()
-    
+
     self.client.cwd("/")
 
   def list_files_folder(self, folder):
@@ -187,7 +187,7 @@ class FTPClient():
     else:
       remote_folder = folder
 
-    self.client.cwd(remote_folder) 
+    self.client.cwd(remote_folder)
     return self.list_files()
 
   def list_files(self):
@@ -196,4 +196,12 @@ class FTPClient():
       if file_info[1]['type'] == 'file':
         files.append(file_info[0])
 
-    return files 
+    return files
+
+  def get_file_size(self, filename):
+    try:
+        if filename[0] != '/':
+          filename = '/' + filename
+        return self.client.size(filename)
+    except:
+        return -1

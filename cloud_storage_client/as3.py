@@ -156,6 +156,12 @@ class AS3Client:
         except ClientError as e:
             self.handle_client_error(e)
 
+    def get_file_size(self, filename):
+        try:
+            return self.resource.Bucket(self.bucket_name).Object(filename.lstrip('/')).content_length
+        except:
+            return -1
+
     def handle_client_error(self, e):
         if e.response['ResponseMetadata']['HTTPStatusCode'] == 403:
             raise IncorrectCredentialsException(code=403)

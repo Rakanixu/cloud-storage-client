@@ -15,7 +15,7 @@ class AzureClient():
         if file_path[0] == '/':
             file_path = file_path[1:len(file_path)]
         self.service.delete_blob(self.bucket_name, file_path)
-        
+
     def delete_folder(self, folder_id):
         blobs = self.service.list_blobs(self.bucket_name)
         if folder_id[0] == '/':
@@ -23,7 +23,7 @@ class AzureClient():
         for blob in blobs:
             if blob.name.find(folder_id + '/') == 0:
                 self.service.delete_blob(self.bucket_name, blob.name)
-                
+
     def download_folder(self, src_folder, dst_folder):
         blobs = self.service.list_blobs(self.bucket_name)
         if src_folder[0] == '/':
@@ -38,17 +38,17 @@ class AzureClient():
 
     def upload_file(self, src_file, dst_file):
         if dst_file[0] == '/':
-            dst_file = dst_file[1:len(dst_file)]    
+            dst_file = dst_file[1:len(dst_file)]
         if dst_file[-1] == '/':
             dst_file = dst_file[0:len(dst_file) - 1]
-        dst_file = dst_file.replace('//', '/')            
+        dst_file = dst_file.replace('//', '/')
 
         self.service.create_blob_from_path(self.bucket_name, dst_file, src_file)
 
     def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         print('DoTar {}, DoCompress {}'.format(do_tar, do_compress))
         if folder_id[0] == '/':
-            folder_id = folder_id[1:len(folder_id)] 
+            folder_id = folder_id[1:len(folder_id)]
         if folder_id[-1] == '/':
             folder_id = folder_id[0:len(folder_id) - 1]
         folder_id = folder_id.replace('//', '/')
@@ -71,9 +71,9 @@ class AzureClient():
             tar.close()
             self.service.create_blob_from_path(self.bucket_name, folder_id + '/' + folder_id + ext, folder_compress)
         else:
-            for chunk in selected_chunks:            
+            for chunk in selected_chunks:
                 self.service.create_blob_from_path(self.bucket_name, folder_id + '/' + chunk, folder_chunks + '/' + chunk)
-    
+
     def download_file(self, folder_id, selected_chunk, output_folder):
         if not os.path.exists(output_folder):
             os.makedirs(output_folder)
@@ -119,3 +119,8 @@ class AzureClient():
             folder = folder[1:len(folder)]
         return [blob.name for blob in blobs if blob.name.find(folder + '/') == 0]
 
+    def get_file_size(self, filename):
+        try:
+            return self.service.get_blob_properties(self.bucket_name, blob_name.ltrim('/')).properties.content_length
+        except:
+            return -1
