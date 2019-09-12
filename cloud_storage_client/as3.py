@@ -32,6 +32,8 @@ class AS3Client:
     def delete_file(self, file_path):
         try:
             bucket = self.resource.Bucket(self.bucket_name)
+            if file_path[0] == '/':
+                file_path = file_path[1:len(file_path)]
             for obj in bucket.objects.filter(Prefix=file_path):
                 obj.delete()
         except ClientError as e:
