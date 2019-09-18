@@ -228,7 +228,8 @@ class StorageClient(storage_adapter.StorageAdapter):
                 time.sleep(seconds_wait)
                 retries_count = retries_count + 1
                 seconds_wait = seconds_wait * self.backoffValue
-
+            else:
+                return file_size
         return file_size
 
     def elapsed_time(self, init_time, end_time):
