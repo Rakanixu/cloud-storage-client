@@ -133,20 +133,12 @@ class FTPClient():
     file.close()
 
   def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
-    if dst_folder[0] != '/':
-      remote_folder = '/' + dst_folder
-    else:
-      remote_folder = dst_folder
-
-    split_dst_file = remote_folder.split('/')
-    remote_path = ""
-    for i in range(len(split_dst_file) - 1):
-      remote_path += "/" + split_dst_file[i]
-
+    dst_folder = dst_folder.strip('/')
+    split_dst_file = dst_folder.split('/')
     try:
-      self.client.cwd(remote_path)
+      self.client.cwd(dst_folder)
     except:
-      for i in range(len(split_dst_file) - 1):
+      for i in range(len(split_dst_file)):
         try:
           self.client.cwd(split_dst_file[i])
         except:
