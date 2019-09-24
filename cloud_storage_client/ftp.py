@@ -133,13 +133,7 @@ class FTPClient():
     file.close()
 
   def upload_folder(self, dst_folder, src_folder, do_tar=False, do_compress=False):
-
-    if dst_folder[0] == '/':
-      dst_folder = dst_folder[1:len(dst_folder)]
-    if dst_folder[-1] == '/':
-      dst_folder = dst_folder[0:len(dst_folder) - 1]
-    dst_folder = dst_folder.replace('//', '/')
-
+    dst_folder = dst_folder.strip('/')
     split_dst_file = dst_folder.split('/')
     try:
       self.client.cwd(dst_folder)
