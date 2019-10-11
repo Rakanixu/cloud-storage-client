@@ -8,7 +8,7 @@ from cloud_storage_client import ftp
 from cloud_storage_client import file_system
 import time
 
-from cloud_storage_client.exceptions import IncorrectCredentialsException, NotFoundException
+from cloud_storage_client.exceptions import IncorrectCredentialsException, NotFoundException, UploadException
 
 GOOGLE_CLOUD_STORAGE = 'GCS'
 AMAZON_S3 = 'S3'
@@ -119,6 +119,8 @@ class StorageClient(storage_adapter.StorageAdapter):
                 raise e
             except NotFoundException as e:
                 raise e
+            except UploadException as e:
+                raise e
             except:
                 print('Retriying request in', seconds_wait, ' seconds')
                 time.sleep(seconds_wait)
@@ -126,7 +128,7 @@ class StorageClient(storage_adapter.StorageAdapter):
                 seconds_wait = seconds_wait * self.backoffValue
                 self.upload_file(src_file, dst_file, total_retries=total_retries, retries_count=retries_count, seconds_wait=seconds_wait)
         else:
-            raise Exception('Could not upload_file', src_file, dst_file)
+            raise UploadException(Exception('Could not upload_file', src_file, dst_file))
 
     def _upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
         ts = time.time()
