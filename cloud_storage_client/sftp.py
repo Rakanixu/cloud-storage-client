@@ -2,6 +2,10 @@ import os, sys, tarfile
 from shutil import copyfile
 from distutils.dir_util import copy_tree
 import pysftp
+from paramiko import SSHException
+
+from cloud_storage_client.exceptions import UploadException
+
 
 class SFTPClient():
   """
@@ -44,8 +48,11 @@ class SFTPClient():
 
     if not self.client.isdir(remote_path):
       self.client.makedirs(remote_path)
+    try:
+      self.client.put(src_file, dst_file)
+    except SSHException as e:
+      raise UploadException(e)
 
-    self.client.put(src_file, dst_file)
 
   def upload_files(self, folder_id, selected_chunks, folder_chunks, do_tar=False, do_compress=False):
     if folder_id[0] != '/':
@@ -73,10 +80,16 @@ class SFTPClient():
         tar.add(folder, recursive=True)
       tar.close()
       print(folder_compress, '/' + folder_id + '/' + folder_id + ext)
-      self.client.put(folder_compress, folder_id + '/' + folder_id + ext)
+      try:
+        self.client.put(folder_compress, folder_id + '/' + folder_id + ext)
+      except SSHException as e:
+        raise UploadException(e)
     else:
       for chunk in selected_chunks:
-        self.client.put(folder_chunks + '/' + chunk, folder_id + '/' + chunk)
+        try:
+          self.client.put(folder_chunks + '/' + chunk, folder_id + '/' + chunk)
+        except SSHException as e:
+          raise UploadException(e)
 
   def download_file(self, folder_id, selected_chunk, output_folder):
     if folder_id == '':
@@ -108,13 +121,19 @@ class SFTPClient():
       with tarfile.open(folder_compress, verb) as tar:
         tar.add(src_folder, arcname=dst_folder, recursive=True)
       tar.close()
-      self.client.put(folder_compress, dst_folder + '/result' + ext)
+      try:
+        self.client.put(folder_compress, dst_folder + '/result' + ext)
+      except SSHException as e:
+        raise UploadException(e)
     else:
       dir = os.fsencode(src_folder)
       for file in os.listdir(dir):
         filePath = src_folder + '/' + file.decode('utf-8')
         if not os.path.isdir(filePath):
-          self.client.put(filePath, dst_folder + '/' + file.decode('utf-8'))
+          try:
+            self.client.put(filePath, dst_folder + '/' + file.decode('utf-8'))
+          except SSHException as e:
+            raise UploadException(e)
 
   def list_files_folder(self, folder):
     if folder[0] != '/':
